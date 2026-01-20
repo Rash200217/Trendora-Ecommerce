@@ -10,26 +10,31 @@ const AdminPanel = () => {
     const [stats, setStats] = useState({ productCount: 0, userCount: 0, totalSales: 0 });
     const [products, setProducts] = useState([]);
     const [users, setUsers] = useState([]);
-    const [heroImages, setHeroImages] = useState([]); // For Homepage Slider
+    const [heroImages, setHeroImages] = useState([]); 
 
     // --- FORM STATES ---
     const [newProduct, setNewProduct] = useState({ name: '', price: 0, imageUrl: '', category: 'MAN', description: '' });
     const [newAdmin, setNewAdmin] = useState({ username: '', password: '' });
     const [newHeroUrl, setNewHeroUrl] = useState('');
 
+    // --- INITIALIZATION ---
     useEffect(() => {
         const user = JSON.parse(localStorage.getItem('user'));
+        
+        // SECURITY: If not logged in OR not an Admin, kick them out
         if (!user || user.role !== 'ADMIN') {
             navigate('/login');
             return;
         }
+
+        // Load all data
         fetchStats();
         fetchProducts();
         fetchUsers();
         fetchHeroImages();
     }, [navigate]);
 
-    // --- API CALLS ---
+    // --- API HELPER FUNCTIONS ---
     const fetchStats = () => axios.get('http://localhost:8080/api/admin/stats').then(res => setStats(res.data)).catch(console.error);
     const fetchProducts = () => axios.get('http://localhost:8080/api/products').then(res => setProducts(res.data)).catch(console.error);
     const fetchUsers = () => axios.get('http://localhost:8080/api/admin/users').then(res => setUsers(res.data)).catch(console.error);
@@ -41,28 +46,31 @@ const AdminPanel = () => {
         try {
             await axios.post('http://localhost:8080/api/products', newProduct);
             alert('Product Added Successfully!');
-            setNewProduct({ ...newProduct, name: '', price: 0, imageUrl: '', description: '' }); // Reset form
+            setNewProduct({ ...newProduct, name: '', price: 0, imageUrl: '', description: '' }); 
             fetchProducts();
             fetchStats();
-        } catch (err) { alert('Error adding product'); }
+        } catch (err) { alert('Error adding product.'); }
     };
 
     const handleDeleteProduct = async (id) => {
-        if(window.confirm("Are you sure you want to delete this product?")) {
-            await axios.delete(`http://localhost:8080/api/products/${id}`);
-            fetchProducts();
-            fetchStats();
+        if(window.confirm("Are you sure you want to delete this product? It will be removed from all carts.")) {
+            try {
+                await axios.delete(`http://localhost:8080/api/products/${id}`);
+                fetchProducts();
+                fetchStats();
+            } catch (err) { alert('Error deleting product.'); }
         }
     };
 
     // --- HANDLERS: HOMEPAGE SLIDER ---
     const handleAddHeroImage = async (e) => {
         e.preventDefault();
+        if(!newHeroUrl) return;
         try {
             await axios.post('http://localhost:8080/api/hero-images', { imageUrl: newHeroUrl });
             setNewHeroUrl('');
             fetchHeroImages();
-        } catch (err) { alert('Error adding image'); }
+        } catch (err) { alert('Error adding image.'); }
     };
 
     const handleDeleteHeroImage = async (id) => {
@@ -72,33 +80,42 @@ const AdminPanel = () => {
         }
     };
 
-    // --- HANDLERS: USERS / ADMIN ---
+    // --- HANDLERS: USER & ADMIN ---
     const handleCreateAdmin = async (e) => {
         e.preventDefault();
+        if (newAdmin.password.length < 8) {
+            alert("Password must be at least 8 characters.");
+            return;
+        }
         try {
             await axios.post('http://localhost:8080/api/admin/create-admin', newAdmin);
             alert('New Admin Created Successfully!');
             setNewAdmin({ username: '', password: '' });
             fetchUsers();
             fetchStats();
-        } catch (err) { alert('Username already exists or error occurred'); }
+        } catch (err) { alert('Username already exists or error occurred.'); }
     };
 
     const handlePassReset = async (userId) => {
-        const newPass = prompt("Enter new password for this user:");
+        const newPass = prompt("Enter new password for this user (min 8 chars):");
         if (newPass) {
+            if (newPass.length < 8) {
+                alert("Password too short. Update cancelled.");
+                return;
+            }
             try {
                 await axios.put(`http://localhost:8080/api/admin/user/${userId}/reset-password`, { newPassword: newPass });
                 alert("Password updated.");
-            } catch (err) { alert('Error updating password'); }
+            } catch (err) { alert('Error updating password.'); }
         }
     };
 
-    // --- COMPONENTS ---
+    // --- SUB-COMPONENTS (VIEWS) ---
 
+    // 1. SIDEBAR NAVIGATION
     const Sidebar = () => (
         <div className="bg-dark text-white min-vh-100 p-3" style={{ width: '250px', position: 'fixed', left: 0, top: 0, zIndex: 1000 }}>
-            <h4 className="text-center fw-bold mb-4 mt-2" style={{ letterSpacing: '2px' }}>TRENDORA ADMIN</h4>
+            <h4 className="text-center fw-bold mb-4 mt-2" style={{ letterSpacing: '2px' }}>TULOS ADMIN</h4>
             <ul className="nav flex-column gap-2">
                 <li className="nav-item">
                     <button className={`btn w-100 text-start text-white ${activeTab === 'dashboard' ? 'btn-secondary' : ''}`} onClick={() => setActiveTab('dashboard')}>
@@ -116,7 +133,7 @@ const AdminPanel = () => {
                     <li className="nav-item" key={cat}>
                         <button className={`btn w-100 text-start text-white ${activeTab === cat ? 'btn-secondary' : ''}`} onClick={() => {
                             setActiveTab(cat);
-                            // Auto-set category in form when tab changes
+                            // Auto-select category for the "Add Product" form
                             const mapCat = cat === 'Man' ? 'MAN' : cat === 'Woman' ? 'WOMAN' : cat === 'Kids' ? 'KIDS' : 'MAN';
                             setNewProduct(prev => ({ ...prev, category: mapCat }));
                         }}>
@@ -137,7 +154,7 @@ const AdminPanel = () => {
                     </button>
                 </li>
                 <li className="nav-item mt-5">
-                    <button className="btn btn-primary w-100" onClick={() => { localStorage.removeItem('user'); navigate('/login'); }}>
+                    <button className="btn btn-danger w-100" onClick={() => { localStorage.removeItem('user'); navigate('/login'); }}>
                         <i className="fas fa-sign-out-alt me-2"></i> Logout
                     </button>
                 </li>
@@ -145,6 +162,7 @@ const AdminPanel = () => {
         </div>
     );
 
+    // 2. DASHBOARD VIEW
     const DashboardView = () => (
         <div className="row g-4 fade-in">
             <div className="col-md-4">
@@ -183,6 +201,7 @@ const AdminPanel = () => {
         </div>
     );
 
+    // 3. HOMEPAGE MANAGER VIEW
     const HomepageManager = () => (
         <div className="fade-in">
             <h4 className="mb-4 fw-bold">Homepage Slider Manager</h4>
@@ -223,10 +242,11 @@ const AdminPanel = () => {
         </div>
     );
 
+    // 4. PRODUCT MANAGER VIEW
     const ProductManager = ({ filter }) => {
-        // Filter logic: 'New Collection' shows everything or specific logic, others filter by category
+        // Filter logic: 'New Collection' shows everything, others filter by category string
         const filtered = filter === 'New Collection' 
-            ? products // or products.filter(p => p.isNew) if you had that field
+            ? products 
             : products.filter(p => p.category?.toUpperCase() === (filter === 'Man' ? 'MAN' : filter === 'Woman' ? 'WOMAN' : 'KIDS'));
 
         return (
@@ -234,7 +254,7 @@ const AdminPanel = () => {
                 <h4 className="mb-4 fw-bold">Manage: <span className="text-primary">{filter}</span></h4>
                 
                 <div className="card p-4 mb-4 bg-white border-0 shadow-sm">
-                    <h6 className="mb-3">Add New Item</h6>
+                    <h6 className="mb-3">Add New Item to Store</h6>
                     <form onSubmit={handleAddProduct}>
                         <div className="row g-2">
                             <div className="col-md-4">
@@ -247,11 +267,10 @@ const AdminPanel = () => {
                                 <input className="form-control" placeholder="Image URL" required value={newProduct.imageUrl} onChange={e => setNewProduct({...newProduct, imageUrl: e.target.value})} />
                             </div>
                             <div className="col-md-2">
-                                {/* Hidden/Disabled select since we auto-set it based on tab, but good to show for clarity */}
                                 <select className="form-select" value={newProduct.category} onChange={e => setNewProduct({...newProduct, category: e.target.value})}>
                                     <option value="MAN">Man</option>
                                     <option value="WOMAN">Woman</option>
-                                    <option value="KIDS">Kid</option>
+                                    <option value="KIDS">Kids</option>
                                 </select>
                             </div>
                             <div className="col-12">
@@ -289,6 +308,7 @@ const AdminPanel = () => {
         );
     };
 
+    // 5. USER MANAGER VIEW
     const UserManager = () => (
         <div className="card shadow-sm border-0 fade-in">
             <div className="card-header bg-white py-3 d-flex justify-content-between align-items-center">
@@ -321,6 +341,7 @@ const AdminPanel = () => {
         </div>
     );
 
+    // 6. CREATE ADMIN VIEW
     const CreateAdmin = () => (
         <div className="row justify-content-center fade-in">
             <div className="col-md-6">
@@ -340,7 +361,7 @@ const AdminPanel = () => {
                             </div>
                             <div className="mb-4">
                                 <label className="form-label fw-bold">Password</label>
-                                <input className="form-control form-control-lg" type="password" required onChange={e => setNewAdmin({...newAdmin, password: e.target.value})} value={newAdmin.password} />
+                                <input className="form-control form-control-lg" type="password" placeholder="Min 8 characters" required onChange={e => setNewAdmin({...newAdmin, password: e.target.value})} value={newAdmin.password} />
                             </div>
                             <button className="btn btn-warning w-100 fw-bold py-2 shadow-sm">
                                 <i className="fas fa-check-circle me-2"></i> Create Admin User
@@ -352,6 +373,7 @@ const AdminPanel = () => {
         </div>
     );
 
+    // --- MAIN RENDER ---
     return (
         <div className="d-flex bg-light min-vh-100">
             <Sidebar />
