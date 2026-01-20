@@ -1,6 +1,5 @@
 package com.trendora.backend.controller;
 
-import com.trendora.backend.model.Order;
 import com.trendora.backend.model.User;
 import com.trendora.backend.repository.OrderRepository;
 import com.trendora.backend.repository.ProductRepository;
@@ -28,7 +27,7 @@ public class AdminController {
     private OrderRepository orderRepository;
 
     @Autowired
-    private PasswordEncoder passwordEncoder; // For Encryption
+    private PasswordEncoder passwordEncoder;
 
     // --- 1. DASHBOARD STATS ---
     @GetMapping("/stats")
@@ -37,7 +36,6 @@ public class AdminController {
         stats.put("productCount", productRepository.count());
         stats.put("userCount", userRepository.count());
 
-        // Calculate Total Sales
         Double totalSales = orderRepository.getTotalSales();
         stats.put("totalSales", totalSales != null ? totalSales : 0.0);
 
@@ -45,40 +43,42 @@ public class AdminController {
     }
 
     // --- 2. USER MANAGEMENT ---
-
-    // Get all users for the table
     @GetMapping("/users")
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
-    // Reset User Password (ENCRYPTED)
+    // RESET USER PASSWORD (Admin Action)
     @PutMapping("/user/{id}/reset-password")
     public User resetPassword(@PathVariable Long id, @RequestBody Map<String, String> payload) {
+        String newPassword = payload.get("newPassword");
+
+        // VALIDATION: Check password length
+        if (newPassword == null || newPassword.length() < 8) {
+            throw new RuntimeException("Password must be at least 8 characters long");
+        }
+
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        String newRawPassword = payload.get("newPassword");
-
-        // Encrypt before saving
-        user.setPassword(passwordEncoder.encode(newRawPassword));
-
+        user.setPassword(passwordEncoder.encode(newPassword));
         return userRepository.save(user);
     }
 
-    // --- 3. CREATE NEW ADMIN (ENCRYPTED) ---
+    // --- 3. CREATE ADMIN ---
     @PostMapping("/create-admin")
     public User createAdmin(@RequestBody User adminUser) {
+        // VALIDATION: Check password length
+        if (adminUser.getPassword() == null || adminUser.getPassword().length() < 8) {
+            throw new RuntimeException("Password must be at least 8 characters long");
+        }
+
         if (userRepository.findByUsername(adminUser.getUsername()) != null) {
             throw new RuntimeException("Username already exists");
         }
 
-        // Encrypt Password
         adminUser.setPassword(passwordEncoder.encode(adminUser.getPassword()));
-
-        // Force Role to ADMIN
         adminUser.setRole("ADMIN");
-
         return userRepository.save(adminUser);
     }
 }

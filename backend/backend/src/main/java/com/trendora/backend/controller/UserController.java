@@ -3,51 +3,76 @@ package com.trendora.backend.controller;
 import com.trendora.backend.model.User;
 import com.trendora.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder; // Import this
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
 @CrossOrigin(origins = "http://localhost:3000")
 public class UserController {
 
-    @Autowired private UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
 
-    // Inject the encryption tool
-    @Autowired private PasswordEncoder passwordEncoder;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
-    // --- 1. SIGNUP (Encrypt Password) ---
+    // --- 1. SIGNUP ---
     @PostMapping("/signup")
     public User signup(@RequestBody User user) {
+        // VALIDATION: Check password length
+        if (user.getPassword() == null || user.getPassword().length() < 8) {
+            throw new RuntimeException("Password must be at least 8 characters long");
+        }
+
         if (userRepository.findByUsername(user.getUsername()) != null) {
             throw new RuntimeException("Username already exists");
         }
 
-        // ENCRYPT HERE: Turn "password123" into "$2a$10$..."
-        String encodedPassword = passwordEncoder.encode(user.getPassword());
-        user.setPassword(encodedPassword);
+        // Encrypt Password
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-        // Default role if not provided
+        // Set Default Role
         if (user.getRole() == null) user.setRole("USER");
 
         return userRepository.save(user);
     }
 
-    // --- 2. LOGIN (Compare Hash) ---
+    // --- 2. LOGIN ---
     @PostMapping("/login")
     public User login(@RequestBody User loginDetails) {
-        // Find user by Username only
         User user = userRepository.findByUsername(loginDetails.getUsername());
 
         if (user == null) {
             throw new RuntimeException("User not found");
         }
 
-        // COMPARE HERE: Check if raw password matches the database hash
         if (!passwordEncoder.matches(loginDetails.getPassword(), user.getPassword())) {
             throw new RuntimeException("Invalid credentials");
         }
 
-        return user; // Return user if successful
+        return user;
+    }
+
+    // --- 3. FORGOT PASSWORD ---
+    @PutMapping("/forgot-password")
+    public User forgotPassword(@RequestBody Map<String, String> payload) {
+        String username = payload.get("username");
+        String newPassword = payload.get("newPassword");
+
+        // VALIDATION: Check password length
+        if (newPassword == null || newPassword.length() < 8) {
+            throw new RuntimeException("Password must be at least 8 characters long");
+        }
+
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        return userRepository.save(user);
     }
 }
