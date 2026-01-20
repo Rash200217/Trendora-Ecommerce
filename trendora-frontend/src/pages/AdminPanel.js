@@ -115,7 +115,7 @@ const AdminPanel = () => {
     // 1. SIDEBAR NAVIGATION
     const Sidebar = () => (
         <div className="bg-dark text-white min-vh-100 p-3" style={{ width: '250px', position: 'fixed', left: 0, top: 0, zIndex: 1000 }}>
-            <h4 className="text-center fw-bold mb-4 mt-2" style={{ letterSpacing: '2px' }}>TULOS ADMIN</h4>
+            <h4 className="text-center fw-bold mb-4 mt-2" style={{ letterSpacing: '2px' }}>TRENDORA ADMIN</h4>
             <ul className="nav flex-column gap-2">
                 <li className="nav-item">
                     <button className={`btn w-100 text-start text-white ${activeTab === 'dashboard' ? 'btn-secondary' : ''}`} onClick={() => setActiveTab('dashboard')}>
@@ -154,7 +154,7 @@ const AdminPanel = () => {
                     </button>
                 </li>
                 <li className="nav-item mt-5">
-                    <button className="btn btn-danger w-100" onClick={() => { localStorage.removeItem('user'); navigate('/login'); }}>
+                    <button className="btn btn-primary w-100" onClick={() => { localStorage.removeItem('user'); navigate('/login'); }}>
                         <i className="fas fa-sign-out-alt me-2"></i> Logout
                     </button>
                 </li>
@@ -270,7 +270,7 @@ const AdminPanel = () => {
                                 <select className="form-select" value={newProduct.category} onChange={e => setNewProduct({...newProduct, category: e.target.value})}>
                                     <option value="MAN">Man</option>
                                     <option value="WOMAN">Woman</option>
-                                    <option value="KIDS">Kids</option>
+                                    <option value="KIDS">Kid</option>
                                 </select>
                             </div>
                             <div className="col-12">

@@ -14,6 +14,7 @@ import PaymentSuccess from './pages/PaymentSuccess';
 import Cart from './pages/Cart';
 import Wishlist from './pages/Wishlist';
 import SearchResults from './pages/SearchResults'; // Import New Page
+import ForgotPassword from './pages/ForgotPassword';
 
 function App() {
   return (
@@ -31,7 +32,7 @@ function App() {
           <Route path="/wishlist" element={<Wishlist />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/payment-success" element={<PaymentSuccess />} />
-          
+          <Route path="/forgot-password" element={<ForgotPassword />} />
           {/* New Search Route */}
           <Route path="/search" element={<SearchResults />} />
         </Routes>
