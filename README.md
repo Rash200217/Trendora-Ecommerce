@@ -57,9 +57,9 @@ Follow these steps to run the project locally.
 
 ### **2. Database Setup**
 1.  Open **pgAdmin** or your SQL terminal.
-2.  Create a database named `trendora`.
+2.  Create a database named `trendora_db`.
 3.  The tables will be automatically created by Hibernate when you run the backend.
-
+4.  If not use backup_database file when trendora_db database didnt work properly.
 ### **3. Backend Setup (Spring Boot)**
 ```bash
 # Navigate to the backend folder
@@ -91,7 +91,7 @@ After setting up the database, you can create these users or use the SQL provide
 # Admin:-admin,password123
 # User:-user1,password123
 
-Note: Passwords are encrypted in the database. Do not manually insert plain text passwords into SQL.
+Note: Use atleast 8 characters for when creating passwords. Passwords are encrypted in the database. Do not manually insert plain text passwords into SQL.
 
 ## 🤝 Contributing
 Fork the repository.
