@@ -1,6 +1,10 @@
 # 🛍️ Trendora E-Commerce
 
-**Trendora** is a full-stack fashion e-commerce application built to provide a seamless shopping experience. It features a secure administrative dashboard, dynamic product management, and a responsive user interface for customers.
+![Image Alt](https://github.com/Rash200217/Trendora-Ecommerce/blob/main/Screenshot%201.png?raw=true)
+![Image Alt](https://github.com/Rash200217/Trendora-Ecommerce/blob/main/Screenshot%202.png?raw=true)
+![Image Alt](https://github.com/Rash200217/Trendora-Ecommerce/blob/main/Screenshot%203.png?raw=true)
+
+**Trendora** is a full-stack fashion e-commerce web application built to provide a seamless shopping experience. It features a secure administrative dashboard, dynamic product management, and a responsive user interface for customers.
 
 ![Project Status](https://img.shields.io/badge/status-active-success.svg)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
@@ -68,5 +72,37 @@ cd backend
 # Run the application
 mvn spring-boot:run
 The Backend will start on http://localhost:8080
+```
+### **4. Frontend Setup (React)**
+```bash
+# Navigate to the frontend folder
+cd trendora-frontend
 
+# Install dependencies
+npm install
 
+# Start the development server
+npm start
+The Frontend will open on http://localhost:3000
+```
+## 🔑 Default Login Credentials
+After setting up the database, you can create these users or use the SQL provided in the setup guide.
+
+# Admin:-admin,password123
+# User:-user1,password123
+
+Note: Passwords are encrypted in the database. Do not manually insert plain text passwords into SQL.
+
+## 🤝 Contributing
+Fork the repository.
+
+Create a new branch (git checkout -b feature-branch).
+
+Commit your changes (git commit -m 'Add new feature').
+
+Push to the branch (git push origin feature-branch).
+
+Open a Pull Request.
+
+## 📝 License
+This project is open-source and available under the MIT License.
