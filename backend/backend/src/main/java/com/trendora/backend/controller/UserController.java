@@ -75,4 +75,26 @@ public class UserController {
         user.setPassword(passwordEncoder.encode(newPassword));
         return userRepository.save(user);
     }
+
+    // --- TEMPORARY EMERGENCY SETUP ---
+    // URL: http://localhost:8080/api/auth/emergency-admin
+    @GetMapping("/emergency-admin")
+    public String createEmergencyAdmin() {
+        // 1. Delete old admin if exists
+        User oldAdmin = userRepository.findByUsername("admin");
+        if (oldAdmin != null) {
+            userRepository.delete(oldAdmin);
+        }
+
+        // 2. Create new Admin
+        User admin = new User();
+        admin.setUsername("admin");
+        // We let the app encrypt it, guaranteeing a match
+        admin.setPassword(passwordEncoder.encode("password123"));
+        admin.setRole("ADMIN");
+
+        userRepository.save(admin);
+
+        return "SUCCESS: Admin created! Username: 'admin', Password: 'password123'";
+    }
 }
