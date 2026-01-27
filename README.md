@@ -36,6 +36,7 @@
 * **Shopping Cart:** Add, remove, and manage items in the cart.
 * **Wishlist:** Save favorite items for later.
 * **Responsive Design:** Works smoothly on mobile and desktop.
+* **ChatBot:** Responds to simple questions.
 
 ### **Admin Features**
 * **Dashboard:** View real-time statistics (Total Sales, User Count, Product Count).
