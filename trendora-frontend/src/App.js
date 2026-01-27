@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
+import Chatbot from './components/Chatbot';
 
 import Home from './pages/Home';
 import Login from './pages/Login';
@@ -15,6 +16,7 @@ import Cart from './pages/Cart';
 import Wishlist from './pages/Wishlist';
 import SearchResults from './pages/SearchResults'; // Import New Page
 import ForgotPassword from './pages/ForgotPassword';
+
 
 function App() {
   return (
@@ -36,6 +38,8 @@ function App() {
           {/* New Search Route */}
           <Route path="/search" element={<SearchResults />} />
         </Routes>
+        {/* 2. ADD CHATBOT HERE (So it floats on top of every page) */}
+        <Chatbot />
       </div>
     </Router>
   );
