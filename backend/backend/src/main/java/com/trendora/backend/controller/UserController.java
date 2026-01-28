@@ -19,37 +19,46 @@ public class UserController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    // --- 1. SIGNUP ---
+    // 1. SIGNUP
     @PostMapping("/signup")
     public User signup(@RequestBody User user) {
-        // VALIDATION: Check password length
-        if (user.getPassword() == null || user.getPassword().length() < 8) {
-            throw new RuntimeException("Password must be at least 8 characters long");
-        }
+        String cleanUsername = user.getUsername().trim();
+        String cleanPassword = user.getPassword().trim();
 
-        if (userRepository.findByUsername(user.getUsername()) != null) {
+        // SAFER CHECK: Explicitly check if the Optional or Object exists
+        User existingUser = userRepository.findByUsername(cleanUsername);
+
+        // Debug Print to see what is happening in the console
+        System.out.println("Checking signup for: " + cleanUsername);
+        System.out.println("Found existing user? " + (existingUser != null));
+
+        if (existingUser != null) {
             throw new RuntimeException("Username already exists");
         }
 
-        // Encrypt Password
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setUsername(cleanUsername);
+        user.setPassword(passwordEncoder.encode(cleanPassword));
 
-        // Set Default Role
         if (user.getRole() == null) user.setRole("USER");
 
         return userRepository.save(user);
     }
 
-    // --- 2. LOGIN ---
+    // 2. LOGIN
     @PostMapping("/login")
     public User login(@RequestBody User loginDetails) {
-        User user = userRepository.findByUsername(loginDetails.getUsername());
+        // TRIM WHITESPACE (The Fix)
+        String cleanUsername = loginDetails.getUsername().trim();
+        String cleanPassword = loginDetails.getPassword().trim();
+
+        User user = userRepository.findByUsername(cleanUsername);
 
         if (user == null) {
             throw new RuntimeException("User not found");
         }
 
-        if (!passwordEncoder.matches(loginDetails.getPassword(), user.getPassword())) {
+        // Compare CLEAN password with Stored Hash
+        if (!passwordEncoder.matches(cleanPassword, user.getPassword())) {
             throw new RuntimeException("Invalid credentials");
         }
 
