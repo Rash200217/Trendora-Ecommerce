@@ -10,6 +10,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SecurityConfig {
 
+    // THIS BEAN IS REQUIRED for Autowired PasswordEncoder to work
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -18,10 +19,12 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // Disable CSRF for React interaction
+                .csrf(csrf -> csrf.disable()) // Disable CSRF for React to work
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll() // Allow all requests (we handle auth manually in Controller)
+                        .requestMatchers("/api/auth/**", "/api/products/**", "/api/hero-images/**", "/api/chat/**").permitAll() // Allow these URLs
+                        .anyRequest().permitAll() // For development, allow everything. Change later!
                 );
         return http.build();
     }
 }
+
