@@ -72,7 +72,7 @@ cd backend
 
 # Run the application
 mvn spring-boot:run
-The Backend will start on http://localhost:8080
+**Required to copy this link inorder to create a admin account first time: http://localhost:8080/api/auth/emergency-admin
 ```
 ### **4. Frontend Setup (React)**
 ```bash
