@@ -89,10 +89,10 @@ The Frontend will open on http://localhost:3000
 ## 🔑 Default Login Credentials
 After setting up the database, you can create these users or use the SQL provided in the setup guide.
 
-# Admin:-admin,password123
-# User:-user1,password123
+# Admin:-admin,password123 (Paste this link in the url: http://localhost:8080/api/auth/emergency-admin)
+# Create a user account from sign up page
 
-Note: Use atleast 8 characters for when creating passwords. Passwords are encrypted in the database. Do not manually insert plain text passwords into SQL.
+Note: Use atleast 8 characters for when creating passwords(eg: 12345678 ). Passwords are encrypted in the database. Do not manually insert plain text passwords into SQL.
 
 ## 🤝 Contributing
 Fork the repository.
