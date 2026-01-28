@@ -91,7 +91,7 @@ After setting up the database, you can create these users or use the SQL provide
 
 # Admin:-admin,password123 (Paste this link in the url: http://localhost:8080/api/auth/emergency-admin)
 # Create a user account from sign up page
-
+# Use the same login form to go the admin panel.(but can use only admin specified username and password only)
 Note: Use atleast 8 characters for when creating passwords(eg: 12345678 ). Passwords are encrypted in the database. Do not manually insert plain text passwords into SQL.
 
 ## 🤝 Contributing
