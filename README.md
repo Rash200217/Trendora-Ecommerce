@@ -1,8 +1,11 @@
 # 🛍️ Trendora E-Commerce
 
 ![Image Alt](https://github.com/Rash200217/Trendora-Ecommerce/blob/main/Screenshot%201.png?raw=true)
-![Image Alt](https://github.com/Rash200217/Trendora-Ecommerce/blob/main/Screenshot%202.png?raw=true)
+![Image Alt](https://github.com/Rash200217/Trendora-Ecommerce/blob/main/Screenshot%202.png?raw=true)  
 ![Image Alt](https://github.com/Rash200217/Trendora-Ecommerce/blob/main/Screenshot%203.png?raw=true)
+
+# Sample Preview
+![Image](https://github.com/user-attachments/assets/6b99c46e-dee7-4b34-94cf-739183efa6aa)
 
 **Trendora** is a full-stack fashion e-commerce web application built to provide a seamless shopping experience. It features a secure administrative dashboard, dynamic product management, and a responsive user interface for customers.
 
