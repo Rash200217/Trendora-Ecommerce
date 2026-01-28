@@ -10,7 +10,7 @@ const Signup = () => {
         e.preventDefault();
         try {
             // The backend defaults the role to 'CUSTOMER', so we just send username/password
-            await axios.post('http://localhost:8080/api/signup', formData);
+            await axios.post('http://localhost:8080/api/auth/signup', formData);
             alert('Signup successful! You can now login.');
             navigate('/login'); // Redirect to login page
         } catch (err) {
